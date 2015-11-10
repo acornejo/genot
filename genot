@@ -97,7 +97,7 @@ require_directory() {
         git init $DIRECTORY
         git commit --allow-empty -m "initial commit"
         git checkout -b scratch
-    elif [ ! -d "$DIRECTORY/.git" ]; then
+    elif ! git rev-parse >/dev/null 2>&1; then
         ask_confirmation "$DIRECTORY exists but is uninitialized, initialize it?"
         git init $DIRECTORY
         git commit --allow-empty -m "initial commit"
