@@ -56,12 +56,12 @@ require_note() {
 require_clean_work_tree() {
     # Update the index
     git update-index -q --ignore-submodules --refresh
-    err=0
+    local err=0
 
     # Disallow unstaged changes in the working tree
     if ! git diff-files --quiet --ignore-submodules --
     then
-        echo >&2 "cannot $1: you have unstaged changes."
+        print_error "cannot $1 with unstaged changes."
         git diff-files --name-status -r --ignore-submodules -- >&2
         err=1
     fi
@@ -69,7 +69,7 @@ require_clean_work_tree() {
     # Disallow uncommitted changes in the index
     if ! git diff-index --cached --quiet HEAD --ignore-submodules --
     then
-        echo >&2 "cannot $1: your index contains uncommitted changes."
+        print_error "cannot $1 with uncommitted changes."
         git diff-index --cached --name-status -r --ignore-submodules HEAD -- >&2
         err=1
     fi
@@ -206,9 +206,9 @@ do_rm() {
 }
 
 do_sync() {
-    CUR_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    local CUR_BRANCH=$(git rev-parse --abbrev-ref HEAD)
     if git ls-remote origin --exit-code >/dev/null 2>&1; then
-        HAS_REMOTE=1
+        local HAS_REMOTE=1
     fi
     if [ "$CUR_BRANCH" == "scratch" ]; then
         require_clean_work_tree "sync"
